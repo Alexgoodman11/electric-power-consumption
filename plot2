@@ -1,0 +1,30 @@
+# electric-power-consumption
+ 
+##declare packages,set folder
+library(dplyr)
+library("grDevices")
+setwd("C:/Users/Alexandre/Desktop/R_directory")
+zip_name <- "household_power_consumption.zip"
+
+## Download and unzip the dataset:
+if (!file.exists(zip_name)){
+  fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+  download.file(fileURL, zip_name)
+  unzip(zip_name)
+}  
+
+##read data
+txt_name <- "household_power_consumption.txt"
+db<-read.table(txt_name, header=TRUE, sep=";", dec=".")
+
+##subset_data
+db_date<-as.Date(db$Date, format="%d/%m/%Y")
+db_sub<-filter(db,db_date == "2007-02-01"|db_date == "2007-02-02")
+
+##making plots
+####plot2
+datetime <- strptime(paste(db_sub$Date, db_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
+db_sub_global_active_power<-as.numeric(db_sub$Global_active_power)
+png("plot2.png", width = 480, height = 480)
+plot(datetime,db_sub_global_active_power,type="l",xlab="",ylab="Global Active Power(Kilowatts)")
+dev.off()
