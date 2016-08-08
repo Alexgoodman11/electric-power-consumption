@@ -1,0 +1,37 @@
+# electric-power-consumption
+ 
+##declare packages,set folder
+library(dplyr)
+library("grDevices")
+setwd("C:/Users/Alexandre/Desktop/R_directory")
+zip_name <- "household_power_consumption.zip"
+
+## Download and unzip the dataset:
+if (!file.exists(zip_name)){
+  fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+  download.file(fileURL, zip_name)
+  unzip(zip_name)
+}  
+
+##read data
+txt_name <- "household_power_consumption.txt"
+db<-read.table(txt_name, header=TRUE, sep=";", dec=".")
+
+##subset_data
+db_date<-as.Date(db$Date, format="%d/%m/%Y")
+db_sub<-filter(db,db_date == "2007-02-01"|db_date == "2007-02-02")
+
+##making plot
+
+
+####plot3
+datetime <- strptime(paste(db_sub$Date, db_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
+db_sub_metering_1<-as.numeric(db_sub$Sub_metering_1)
+db_sub_metering_2<-as.numeric(db_sub$Sub_metering_2)
+db_sub_metering_3<-as.numeric(db_sub$Sub_metering_3)
+png("plot3.png", width = 480, height = 480)
+plot(datetime,db_sub_metering_1,type="l",col= "black",xlab="",ylab="Energy sub metering")
+lines(datetime,db_sub_metering_2,type="l",col="red")
+lines(datetime,db_sub_metering_3,type="l",col="blue")
+legend("topright", c("metering_1","metering_2","metering_3"),lty=1, lwd=2.5,col=c("black","blue","red"))
+dev.off(which =dev.cur())
