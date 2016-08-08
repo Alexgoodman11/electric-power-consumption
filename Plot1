@@ -1,9 +1,7 @@
 # electric-power-consumption
  
 ##declare packages,set folder
-install.packages("dplyr")
 library(dplyr)
-install.packages("grDevices")
 library("grDevices")
 setwd("C:/Users/Alexandre/Desktop/R_directory")
 zip_name <- "household_power_consumption.zip"
