@@ -1,95 +1,114 @@
-# electric-power-consumption
- 
-##declare packages
-install.packages("dplyr")
-library(dplyr)
-install.packages("grDevices")
-library("grDevices")
-setwd("C:/Users/Alexandre/Desktop/R_directory")
-zip_name <- "household_power_consumption.zip"
+## Introduction
+
+This assignment uses data from
+the <a href="http://archive.ics.uci.edu/ml/">UC Irvine Machine
+Learning Repository</a>, a popular repository for machine learning
+datasets. In particular, we will be using the "Individual household
+electric power consumption Data Set" which I have made available on
+the course web site:
 
 
-## Download and unzip the dataset:
-if (!file.exists(zip_name)){
-  fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
-  download.file(fileURL, zip_name)
-  unzip(zip_name)
-}  
+* <b>Dataset</b>: <a href="https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip">Electric power consumption</a> [20Mb]
 
-##read data
-txt_name <- "household_power_consumption.txt"
-db<-read.table(txt_name, header=TRUE, sep=";", dec=".")
-names(db)
-dim(db)
-str(db)
-head(db)
+* <b>Description</b>: Measurements of electric power consumption in
+one household with a one-minute sampling rate over a period of almost
+4 years. Different electrical quantities and some sub-metering values
+are available.
 
 
-##subset_data
-db_date<-as.Date(db$Date, format="%d/%m/%Y")
-db_sub<-filter(db,db_date == "2007-02-01"|db_date == "2007-02-02")
-head(db_sub)
-summary(db_sub)
-str(db_sub)
-dim(db_sub)
-names(db_sub)
+The following descriptions of the 9 variables in the dataset are taken
+from
+the <a href="https://archive.ics.uci.edu/ml/datasets/Individual+household+electric+power+consumption">UCI
+web site</a>:
 
+<ol>
+<li><b>Date</b>: Date in format dd/mm/yyyy </li>
+<li><b>Time</b>: time in format hh:mm:ss </li>
+<li><b>Global_active_power</b>: household global minute-averaged active power (in kilowatt) </li>
+<li><b>Global_reactive_power</b>: household global minute-averaged reactive power (in kilowatt) </li>
+<li><b>Voltage</b>: minute-averaged voltage (in volt) </li>
+<li><b>Global_intensity</b>: household global minute-averaged current intensity (in ampere) </li>
+<li><b>Sub_metering_1</b>: energy sub-metering No. 1 (in watt-hour of active energy). It corresponds to the kitchen, containing mainly a dishwasher, an oven and a microwave (hot plates are not electric but gas powered). </li>
+<li><b>Sub_metering_2</b>: energy sub-metering No. 2 (in watt-hour of active energy). It corresponds to the laundry room, containing a washing-machine, a tumble-drier, a refrigerator and a light. </li>
+<li><b>Sub_metering_3</b>: energy sub-metering No. 3 (in watt-hour of active energy). It corresponds to an electric water-heater and an air-conditioner.</li>
+</ol>
 
-##making plots
-
-####plot1
-db_sub_global_active_power<-as.numeric(db_sub$Global_active_power)
-png("plot1.png", width = 480, height = 480)
-hist(db_sub_global_active_power, breaks=15, main="Global Active Power", col="red",
-     ylab= "Frequency", xlab="Global Active Power(kilowatts)")
-dev.off()
-
-
-####plot2
-datetime <- strptime(paste(db_sub$Date, db_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
-db_sub_global_active_power<-as.numeric(db_sub$Global_active_power)
-png("plot2.png", width = 480, height = 480)
-plot(datetime,db_sub_global_active_power,type="l",xlab="",ylab="Global Active Power(Kilowatts)")
-dev.off()
-
-####plot3
-datetime <- strptime(paste(db_sub$Date, db_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
-db_sub_metering_1<-as.numeric(db_sub$Sub_metering_1)
-db_sub_metering_2<-as.numeric(db_sub$Sub_metering_2)
-db_sub_metering_3<-as.numeric(db_sub$Sub_metering_3)
-png("plot3.png", width = 480, height = 480)
-plot(datetime,db_sub_metering_1,type="l",col= "black",xlab="",ylab="Energy sub metering")
-lines(datetime,db_sub_metering_2,type="l",col="red")
-lines(datetime,db_sub_metering_3,type="l",col="blue")
-legend("topright", c("metering_1","metering_2","metering_3"),lty=1, lwd=2.5,col=c("black","blue","red"))
-dev.off(which =dev.cur())
-
-
-####plot4
-datetime <- strptime(paste(db_sub$Date, db_sub$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
-db_sub_metering_1<-as.numeric(db_sub$Sub_metering_1)
-db_sub_metering_2<-as.numeric(db_sub$Sub_metering_2)
-db_sub_metering_3<-as.numeric(db_sub$Sub_metering_3)
-db_sub_global_active_power<-as.numeric(db_sub$Global_active_power)
-db_sub_global_reactive_power<-as.numeric(db_sub$Global_reactive_power)
-voltage<-as.numeric(db_sub$Voltage)
+## Loading the data
 
 
 
-png("plot4.png", width = 480, height = 480)
-par(mfrow=c(2,2))
-#####1
-plot(datetime,db_sub_global_active_power,type="l",xlab="",ylab="Global Active Power(Kilowatts)")
 
-#####2
-plot(datetime,voltage,type="l",col="black")
 
-#####3
-plot(datetime,db_sub_metering_1,type="l",col= "black",xlab="",ylab="Energy sub metering")
-lines(datetime,db_sub_metering_2,type="l",col="red")
-lines(datetime,db_sub_metering_3,type="l",col="blue")
-legend("topright", c("metering_1","metering_2","metering_3"),lty=, lwd=2.5,col=c("black","blue","red"),bty="o")
+When loading the dataset into R, please consider the following:
 
-#####4
-plot(datetime,db_sub_global_reactive_power,type="l")
-dev.off(which =dev.cur())
+* The dataset has 2,075,259 rows and 9 columns. First
+calculate a rough estimate of how much memory the dataset will require
+in memory before reading into R. Make sure your computer has enough
+memory (most modern computers should be fine).
+
+* We will only be using data from the dates 2007-02-01 and
+2007-02-02. One alternative is to read the data from just those dates
+rather than reading in the entire dataset and subsetting to those
+dates.
+
+* You may find it useful to convert the Date and Time variables to
+Date/Time classes in R using the `strptime()` and `as.Date()`
+functions.
+
+* Note that in this dataset missing values are coded as `?`.
+
+
+## Making Plots
+
+Our overall goal here is simply to examine how household energy usage
+varies over a 2-day period in February, 2007. Your task is to
+reconstruct the following plots below, all of which were constructed
+using the base plotting system.
+
+First you will need to fork and clone the following GitHub repository:
+[https://github.com/rdpeng/ExData_Plotting1](https://github.com/rdpeng/ExData_Plotting1)
+
+
+For each plot you should
+
+* Construct the plot and save it to a PNG file with a width of 480
+pixels and a height of 480 pixels.
+
+* Name each of the plot files as `plot1.png`, `plot2.png`, etc.
+
+* Create a separate R code file (`plot1.R`, `plot2.R`, etc.) that
+constructs the corresponding plot, i.e. code in `plot1.R` constructs
+the `plot1.png` plot. Your code file **should include code for reading
+the data** so that the plot can be fully reproduced. You should also
+include the code that creates the PNG file.
+
+* Add the PNG file and R code file to your git repository
+
+When you are finished with the assignment, push your git repository to
+GitHub so that the GitHub version of your repository is up to
+date. There should be four PNG files and four R code files.
+
+
+The four plots that you will need to construct are shown below. 
+
+
+### Plot 1
+
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+
+### Plot 2
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
+
+### Plot 3
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+
+### Plot 4
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
